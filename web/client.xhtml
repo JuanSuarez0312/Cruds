@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Cliente</title>
+        <style>
+            *{
+                font-family: Arial;
+            }
+            :root {
+                scroll-behavior: smooth;
+                --color1: #E94364;
+                --color2: #EE738E;
+                --color3: #FFFFFF;
+                --color4: #BE780A;
+                --color5: #F6D172;
+                --color6: #000000;
+            }
+            .descargarexcel{
+                width: auto;
+                background: #1c5703;
+                border: 2px solid #0a2602 ;
+                border-radius: 1rem;
+                color: white;
+                margin: 1rem 1rem ;
+                font-size: 1.1rem;
+                font-family: Chivo;
+
+            }
+            .descargarpdf{
+                width: auto;
+                background: #600302;
+                border: 2px solid #3d0600 ;
+                border-radius: 1rem;
+                color: white;
+                margin: 1rem 1rem ;
+                font-size: 1.1rem;
+                font-family: Chivo;
+
+            }
+
+            .descargarexcel:hover {
+                background: white;
+                border: 3px solid #1c5703;
+                color: #0a2602;
+            }
+            .descargarpdf:hover {
+                background: white;
+                border: 3px solid #600302;
+                color: #3d0600;
+            }
+            .green{
+                background: green;
+            }
+            .red{
+                background: red;
+            }
+            .green:hover{
+                color: green;
+            }
+            .red:hover{
+                color: red;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <f:event type="preRenderView" listener="#{loginBean.verificarSesion()}"/>
+
+        <h1 style="color: blue">Bienvenido Cliente</h1>
+
+        <p:growl id="msj" showDetail="true" showSummary="true"/>
+        <f:event type="preRenderView" listener="#{loginBean.verificarSesion()}"/>
+        <f:event type="preRenderView" listener="#{pqrsBean.listar()}"/>
+        <h:outputLabel value="#{loginBean.autenticar()}"/>
+        <h:form id="frmpqrs">
+            <p:commandButton value="Registrar PQRS" actionListener="#{pqrsBean.limpiar()}" oncomplete="PF('wadpqrs').show();" update="adpqrs"/>
+            <p:commandButton value="Cerrar Sesion" actionListener="#{loginBean.cerrarSesion()}" style="margin-left: 10px;"/>
+            <br/><br/>
+
+            <p:commandButton class="descargarexcel" ajax="false" value="XLS" >
+                <p:dataExporter type="xls" target="datos" fileName="PQRS" pageOnly="true"/>
+            </p:commandButton>
+
+            <p:commandButton class="descargarpdf" ajax="false" value="PDF" >
+                <p:dataExporter type="pdf" target="datos" fileName="PQRS" pageOnly="true"/>
+            </p:commandButton>
+
+            <br/><br/>
+
+            <p:dataTable id="datos" value="#{pqrsBean.lstPqrs}" var="pqrs" paginator="true" rows="10"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,{ShowAll|'Todos'}"
+                         reflow="true" style="align-items:center "
+                         paginatorPosition="bottom" >
+
+                <div style="text-align: center;width: auto;display: flex;flex-wrap: wrap;background: violet;">
+
+                    <p:column headerText="Id PQRS" sortBy="#{pqrs.id_Pqrs}" filterBy="#{pqrs.id_Pqrs}" filterMatchMode="contains" width="110" style="text-align: center">
+                        <p:outputLabel value="#{pqrs.id_Pqrs}"/>
+                    </p:column>
+
+                    <p:column headerText="Tipo PQRS" sortBy="#{pqrs.tipo_Pqrs}" filterBy="#{pqrs.tipo_Pqrs}" filterMatchMode="contains" width="130">
+                        <p:outputLabel value="#{pqrs.tipo_Pqrs}"/>
+                    </p:column>
+
+                    <p:column headerText="Fecha Inicial" sortBy="#{pqrs.fecha_Inicial}" filterBy="#{pqrs.fecha_Inicial}" filterMatchMode="contains" width="130">
+                        <p:outputLabel value="#{pqrs.fecha_Inicial}"/>
+                    </p:column>
+
+                    <p:column headerText="Fecha Maxima de Respuesta" sortBy="#{pqrs.fecha_Maxima_Respuesta}" filterBy="#{pqrs.fecha_Maxima_Respuesta}" filterMatchMode="contains">
+                        <p:outputLabel value="#{pqrs.fecha_Maxima_Respuesta}"/>
+                    </p:column>
+
+                    <p:column headerText="Asunto" sortBy="#{pqrs.asunto}" filterBy="#{pqrs.asunto}" filterMatchMode="contains">
+                        <p:outputLabel value="#{pqrs.asunto}"/>
+                    </p:column>
+
+                    <p:column headerText="Descripcion" sortBy="#{pqrs.descripcion_Pqrs}" filterBy="#{pqrs.descripcion_Pqrs}" filterMatchMode="contains" filterStyle="">
+                        <p:outputLabel value="#{pqrs.descripcion_Pqrs}"/>
+                    </p:column>
+
+                    <p:column headerText="Estado" sortBy="#{pqrs.estado}" filterBy="#{pqrs.estado}" filterMatchMode="contains" filterStyle="">
+                        <p:outputLabel value="#{pqrs.estado}"/>
+                    </p:column>
+
+
+                    <p:column headerText="Opciones" exportable="false">
+                        <p:commandButton value="Editar" actionListener="#{pqrsBean.editar(pqrs)}" oncomplete="PF('wedpqrs').show();" update="edpqrs msj"/>
+                        <p:commandButton value="Eliminar" actionListener="#{pqrsBean.eliminar(pqrs)}" update="frmpqrs msj">
+                            <p:confirm header="Eliminar Usuario" message="Estas seguro de eliminar este usuario" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:column>
+                </div>
+
+            </p:dataTable>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes green" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no red" />
+            </p:confirmDialog>    
+        </h:form>
+
+        <p:dialog resizable="false" hideEffect="Drop" id="adpqrs" widgetVar="wadpqrs" width="450" header="Crear Usuario">
+            <h:form>
+                <center>
+                    <h2>Registrar PQRS</h2>
+                    <h:panelGrid columns="2" style="text-align: center">
+
+                        <p:outputLabel for="tip" value="Tipo"/>
+                        <p:inputText id="tip" value="#{pqrsBean.pqrs.tipo_Pqrs}"  required="true" requiredMessage="Debe digitar una ContraseÃ±a"/>
+
+                        <p:outputLabel for="ast" value="Asunto"/>
+                        <p:inputText id="ast" value="#{pqrsBean.pqrs.asunto}"  required="true" requiredMessage="Debe digitar un Nombre"/>
+
+                        <p:outputLabel for="desc" value="Descripcion"/>
+                        <p:inputText id="desc" value="#{pqrsBean.pqrs.descripcion_Pqrs}"  required="true" requiredMessage="Debe digitar un Apellido"/>
+
+                        <p:outputLabel for="idu" value="Id Usuario"/>
+                        <p:inputText id="idu" value="#{pqrsBean.pqrs.id_Usuario}"  required="true" requiredMessage="Debe digitar un Correo"/>
+
+                        <p:commandButton value="Guardar" actionListener="#{pqrsBean.crear()}" update="frmpqrs msj" oncomplete="PF('wadpqrs').hide();"/>
+                        <p:commandButton value="Cancelar" onclick="PF('wadpqrs').hide();" />
+                    </h:panelGrid>
+                </center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog resizable="false" hideEffect="Drop" id="edpqrs" widgetVar="wedpqrs" width="450" header="Editar Usuario">
+            <h:form>
+                <center>
+                    <h2>Editar PQRS</h2>
+                    <h:panelGrid columns="2" style="text-align: center">
+
+                        <p:outputLabel for="idpq" value="Id PQRS"/>
+                        <p:inputText readonly="true" id="idpq" value="#{pqrsBean.pqrs.id_Pqrs}"  required="true" requiredMessage="Debe digitar una Id"/>
+
+                        <p:outputLabel for="ast" value="Asunto"/>
+                        <p:inputText readonly="true" id="ast" value="#{pqrsBean.pqrs.asunto}"  required="true" requiredMessage="Debe digitar un Asunto"/>
+
+                        <p:outputLabel for="desc" value="ContraseÃ±a"/>
+                        <p:inputText id="desc" value="#{pqrsBean.pqrs.descripcion_Pqrs}"  required="true" requiredMessage="Debe digitar una Descripcion"/>
+
+
+                        <p:commandButton value="Actualizar" actionListener="#{usuarioBean.actualizar()}" update="frmpqrs msj" oncomplete="PF('wedpqrs').hide();"/>
+                        <p:commandButton value="Cancelar" onclick="PF('wedpqrs').hide();" />
+                    </h:panelGrid>
+                </center>
+            </h:form>
+        </p:dialog>
+    </h:body>
+</html>
+

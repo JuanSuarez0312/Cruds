@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Usuarios</title>
+        <style>
+            *{
+                font-family: Arial;
+            }
+            :root {
+                scroll-behavior: smooth;
+                --color1: #E94364;
+                --color2: #EE738E;
+                --color3: #FFFFFF;
+                --color4: #BE780A;
+                --color5: #F6D172;
+                --color6: #000000;
+            }
+            .descargarexcel{
+                width: auto;
+                background: #1c5703;
+                border: 2px solid #0a2602 ;
+                border-radius: 1rem;
+                color: white;
+                margin: 1rem 1rem ;
+                font-size: 1.1rem;
+                font-family: Chivo;
+
+            }
+            .descargarpdf{
+                width: auto;
+                background: #600302;
+                border: 2px solid #3d0600 ;
+                border-radius: 1rem;
+                color: white;
+                margin: 1rem 1rem ;
+                font-size: 1.1rem;
+                font-family: Chivo;
+
+            }
+
+            .descargarexcel:hover {
+                background: white;
+                border: 3px solid #1c5703;
+                color: #0a2602;
+            }
+            .descargarpdf:hover {
+                background: white;
+                border: 3px solid #600302;
+                color: #3d0600;
+            }
+            .green{
+                background: green;
+            }
+            .red{
+                background: red;
+            }
+            .green:hover{
+                color: green;
+            }
+            .red:hover{
+                color: red;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <p:growl id="msj" showDetail="true" showSummary="true"/>
+        <f:event type="preRenderView" listener="#{loginBean.verificarSesion()}"/>
+        <f:event type="preRenderView" listener="#{usuarioBean.listar()}"/>
+        <h1 style="color: green">Bienvenido Administrador</h1>
+        <h:outputLabel value="#{loginBean.autenticar()}"/>
+        <h:form id="frmusers">
+            <p:commandButton value="Nuevo Usuario" actionListener="#{usuarioBean.limpiar()}" oncomplete="PF('wadusr').show();" update="adusr"/>
+            <p:commandButton value="Cerrar Sesion" actionListener="#{loginBean.cerrarSesion()}" style="margin-left: 10px;"/>
+            <p:commandButton value="Volver" action="admin" style="margin-left: 10px;"/>
+            <br/><br/>
+
+            <p:commandButton class="descargarexcel" ajax="false" value="XLS" >
+                <p:dataExporter type="xls" target="datos" fileName="Lista Usuarios" pageOnly="true"/>
+            </p:commandButton>
+
+            <p:commandButton class="descargarpdf" ajax="false" value="PDF" >
+                <p:dataExporter type="pdf" target="datos" fileName="Lista Usuarios" pageOnly="true"/>
+            </p:commandButton>
+
+            <br/><br/>
+
+            <p:dataTable id="datos" value="#{usuarioBean.lstUser}" var="user" paginator="true" rows="10"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,{ShowAll|'Todos'}"
+                         reflow="true" style="align-items:center "
+                         paginatorPosition="bottom" >
+
+                <div style="text-align: center;width: auto;display: flex;flex-wrap: wrap;background: violet;">
+
+                    <p:column headerText="Id Usuario" sortBy="#{user.id_Usuario}" filterBy="#{user.id_Usuario}" filterMatchMode="contains" width="110" style="text-align: center">
+                        <p:outputLabel value="#{user.id_Usuario}"/>
+                    </p:column>
+
+                    <p:column headerText="Nombre" sortBy="#{user.nombre}" filterBy="#{user.nombre}" filterMatchMode="contains" width="130">
+                        <p:outputLabel value="#{user.nombre}"/>
+                    </p:column>
+
+                    <p:column headerText="Apellido" sortBy="#{user.apellido}" filterBy="#{user.apellido}" filterMatchMode="contains" width="130">
+                        <p:outputLabel value="#{user.apellido}"/>
+                    </p:column>
+
+                    <p:column headerText="Correo" sortBy="#{user.correo}" filterBy="#{user.correo}" filterMatchMode="contains">
+                        <p:outputLabel value="#{user.correo}"/>
+                    </p:column>
+
+                    <p:column headerText="Telefono" sortBy="#{user.telefono}" filterBy="#{user.telefono}" filterMatchMode="contains">
+                        <p:outputLabel value="#{user.telefono}"/>
+                    </p:column>
+
+                    <p:column headerText="Direccion" sortBy="#{user.direccion}" filterBy="#{user.direccion}" filterMatchMode="contains" filterStyle="">
+                        <p:outputLabel value="#{user.direccion}"/>
+                    </p:column>
+
+                    <p:column headerText="Opciones" exportable="false">
+                        <p:commandButton value="Editar" actionListener="#{usuarioBean.editar(user)}" oncomplete="PF('wedusr').show();" update="edusr msj"/>
+                        <p:commandButton value="Eliminar" actionListener="#{usuarioBean.eliminar(user)}" update="frmusers msj">
+                            <p:confirm header="Eliminar Usuario" message="Estas seguro de eliminar este usuario" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:column>
+                </div>
+
+            </p:dataTable>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes green" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no red" />
+            </p:confirmDialog>    
+        </h:form>
+
+        <p:dialog resizable="false" hideEffect="Drop" id="adusr" widgetVar="wadusr" width="450" header="Crear Usuario">
+            <h:form>
+                <center>
+                    <h2>Agregar Usuario</h2>
+                    <h:panelGrid columns="2" style="text-align: center">
+                        <p:outputLabel for="idu" value="Id Usuario"/>
+                        <p:inputText id="idu" value="#{usuarioBean.user.id_Usuario}"  required="true" requiredMessage="Debe digitar un numero de identificacion"/>
+
+                        <p:outputLabel for="ctr" value="Contraseña"/>
+                        <p:inputText id="ctr" value="#{usuarioBean.user.contraseña}"  required="true" requiredMessage="Debe digitar una ContraseÃ±a"/>
+
+                        <p:outputLabel for="nom" value="Nombre"/>
+                        <p:inputText id="nom" value="#{usuarioBean.user.nombre}"  required="true" requiredMessage="Debe digitar un Nombre"/>
+
+                        <p:outputLabel for="ape" value="Apellido"/>
+                        <p:inputText id="ape" value="#{usuarioBean.user.apellido}"  required="true" requiredMessage="Debe digitar un Apellido"/>
+
+                        <p:outputLabel for="cor" value="Correo"/>
+                        <p:inputText id="cor" value="#{usuarioBean.user.correo}"  required="true" requiredMessage="Debe digitar un Correo"/>
+
+                        <p:outputLabel for="tel" value="Telefono"/>
+                        <p:inputText id="tel" value="#{usuarioBean.user.telefono}"  required="true" requiredMessage="Debe digitar un Telefono"/>
+
+                        <p:outputLabel for="dir" value="Direccion"/>
+                        <p:inputText id="dir" value="#{usuarioBean.user.direccion}"  required="true" requiredMessage="Debe digitar una Direccion"/>
+
+                        <p:commandButton value="Guardar" actionListener="#{usuarioBean.crear()}" update="frmusers msj" oncomplete="PF('wadusr').hide();"/>
+                        <p:commandButton value="Cancelar" onclick="PF('wadusr').hide();" />
+                    </h:panelGrid>
+                </center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog resizable="false" hideEffect="Drop" id="edusr" widgetVar="wedusr" width="450" header="Editar Usuario">
+            <h:form>
+                <center>
+                    <h2>Editar Usuario</h2>
+                    <h:panelGrid columns="2" style="text-align: center">
+                        <p:outputLabel for="idu" value="Id Usuario"/>
+                        <p:inputText readonly="true" id="idu" value="#{usuarioBean.user.id_Usuario}"  required="true" requiredMessage="Debe digitar un numero de identificacion"/>
+
+                        <p:outputLabel for="ctr" value="Contraseña"/>
+                        <p:inputText id="ctr" value="#{usuarioBean.user.contraseña}"  required="true" requiredMessage="Debe digitar una ContraseÃ±a"/>
+
+                        <p:outputLabel for="nom" value="Nombre"/>
+                        <p:inputText id="nom" value="#{usuarioBean.user.nombre}"  required="true" requiredMessage="Debe digitar un Nombre"/>
+
+                        <p:outputLabel for="ape" value="Apellido"/>
+                        <p:inputText id="ape" value="#{usuarioBean.user.apellido}"  required="true" requiredMessage="Debe digitar un Apellido"/>
+
+                        <p:outputLabel for="cor" value="Correo"/>
+                        <p:inputText id="cor" value="#{usuarioBean.user.correo}"  required="true" requiredMessage="Debe digitar un Correo"/>
+
+                        <p:outputLabel for="tel" value="Telefono"/>
+                        <p:inputText id="tel" value="#{usuarioBean.user.telefono}"  required="true" requiredMessage="Debe digitar un Telefono"/>
+
+                        <p:outputLabel for="dir" value="Direccion"/>
+                        <p:inputText id="dir" value="#{usuarioBean.user.direccion}"  required="true" requiredMessage="Debe digitar una Direccion"/>
+
+                        <p:commandButton value="Actualizar" actionListener="#{usuarioBean.actualizar()}" update="frmusers msj" oncomplete="PF('wedusr').hide();"/>
+                        <p:commandButton value="Cancelar" onclick="PF('wedusr').hide();" />
+                    </h:panelGrid>
+                </center>
+            </h:form>
+        </p:dialog>
+    </h:body>
+</html>
+

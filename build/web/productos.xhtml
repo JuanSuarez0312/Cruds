@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Productos</title>
+        <style>
+            *{
+                font-family: Arial;
+            }
+            :root {
+                scroll-behavior: smooth;
+                --color1: #E94364;
+                --color2: #EE738E;
+                --color3: #FFFFFF;
+                --color4: #BE780A;
+                --color5: #F6D172;
+                --color6: #000000;
+            }
+            .descargarexcel{
+                width: auto;
+                background: #1c5703;
+                border: 2px solid #0a2602 ;
+                border-radius: 1rem;
+                color: white;
+                margin: 1rem 1rem ;
+                font-size: 1.1rem;
+                font-family: Chivo;
+
+            }
+            .descargarpdf{
+                width: auto;
+                background: #600302;
+                border: 2px solid #3d0600 ;
+                border-radius: 1rem;
+                color: white;
+                margin: 1rem 1rem ;
+                font-size: 1.1rem;
+                font-family: Chivo;
+
+            }
+
+            .descargarexcel:hover {
+                background: white;
+                border: 3px solid #1c5703;
+                color: #0a2602;
+            }
+            .descargarpdf:hover {
+                background: white;
+                border: 3px solid #600302;
+                color: #3d0600;
+            }
+            .green{
+                background: green;
+            }
+            .red{
+                background: red;
+            }
+            .green:hover{
+                color: green;
+            }
+            .red:hover{
+                color: red;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <p:growl id="msj" showDetail="true" showSummary="true"/>
+        <f:event type="preRenderView" listener="#{loginBean.verificarSesion()}"/>
+        <f:event type="preRenderView" listener="#{productoBean.listar()}"/>
+        <h1 style="color: green">Bienvenido Administrador</h1>
+        <h:outputLabel value="#{loginBean.autenticar()}"/>
+        <h:form id="frmprod">
+            <p:commandButton value="Nuevo Producto" actionListener="#{productoBean.limpiar()}" oncomplete="PF('wadprod').show();" update="adprod"/>
+            <p:commandButton value="Cerrar Sesion" actionListener="#{loginBean.cerrarSesion()}" style="margin-left: 10px;"/>
+            <p:commandButton value="Volver" action="admin" style="margin-left: 10px;"/>
+            <br/><br/>
+
+            <p:commandButton class="descargarexcel" ajax="false" value="XLS" >
+                <p:dataExporter type="xls" target="datos" fileName="Lista Productos" pageOnly="true"/>
+            </p:commandButton>
+
+            <p:commandButton class="descargarpdf" ajax="false" value="PDF" >
+                <p:dataExporter type="pdf" target="datos" fileName="Lista Productos" pageOnly="true"/>
+            </p:commandButton>
+
+            <br/><br/>
+
+            <p:dataTable id="datos" value="#{productoBean.lstProduc}" var="prod" paginator="true" rows="10"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,{ShowAll|'Todos'}"
+                         reflow="true" style="align-items:center "
+                         paginatorPosition="bottom" >
+
+                <div style="text-align: center;width: auto;display: flex;flex-wrap: wrap;background: violet;">
+
+                    <p:column headerText="Id Producto" sortBy="#{prod.id_Producto}" filterBy="#{prod.id_Producto}" filterMatchMode="contains" width="110" style="text-align: center">
+                        <p:outputLabel value="#{prod.id_Producto}"/>
+                    </p:column>
+
+                    <p:column headerText="Nombre Producto" sortBy="#{prod.nombre_Producto}" filterBy="#{prod.nombre_Producto}" filterMatchMode="contains" >
+                        <p:outputLabel value="#{prod.nombre_Producto}"/>
+                    </p:column>
+
+                    <p:column headerText="Descripcion" sortBy="#{prod.descripcion_Producto}" filterBy="#{prod.descripcion_Producto}" filterMatchMode="contains" >
+                        <p:outputLabel value="#{prod.descripcion_Producto}"/>
+                    </p:column>
+
+                    <p:column headerText="Precio" sortBy="#{prod.precio}" filterBy="#{prod.precio}" filterMatchMode="contains">
+                        <p:outputLabel value="$ #{prod.precio}"/>
+                    </p:column>
+
+                    <p:column headerText="Cantidad Stock" sortBy="#{prod.cantidad_Stock}" filterBy="#{prod.cantidad_Stock}" filterMatchMode="contains">
+                        <p:outputLabel value="#{prod.cantidad_Stock}"/>
+                    </p:column>
+
+                    <p:column headerText="Opciones" exportable="false">
+                        <p:commandButton value="Editar" actionListener="#{productoBean.editar(prod)}" oncomplete="PF('wedprod').show();" update="edprod msj"/>
+                        <p:commandButton value="Eliminar" actionListener="#{productoBean.eliminar(prod)}" update="frmprod msj">
+                            <p:confirm header="Eliminar Usuario" message="Estas seguro de eliminar este producto" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:column>
+                </div>
+
+            </p:dataTable>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes green" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no red" />
+            </p:confirmDialog>
+        </h:form>
+
+        <p:dialog resizable="false" hideEffect="Drop" id="adprod" widgetVar="wadprod" width="450" header="Crear Producto">
+            <h:form>
+                <center>
+                    <h2>Agregar Producto</h2>
+                    <h:panelGrid columns="2" style="text-align: center">
+                        <p:outputLabel for="idp" value="Id Producto"/>
+                        <p:inputText id="idp" value="#{productoBean.prod.id_Producto}"  required="true" requiredMessage="Debe digitar un numero identificador para el producto"/>
+
+                        <p:outputLabel for="nomp" value="Nombre"/>
+                        <p:inputText id="nomp" value="#{productoBean.prod.nombre_Producto}"  required="true" requiredMessage="Debe digitar el nombre del producto"/>
+
+                        <p:outputLabel for="desc" value="Descripcion"/>
+                        <p:inputText id="desc" value="#{productoBean.prod.descripcion_Producto}" />
+
+                        <p:outputLabel for="pre" value="Precio"/>
+                        <p:inputText id="pre" value="#{productoBean.prod.precio}"  required="true" requiredMessage="Debe digitar un Precio"/>
+
+                        <p:outputLabel for="cant" value="Cantidad"/>
+                        <p:inputText id="cant" value="#{productoBean.prod.cantidad_Stock}"  required="true" requiredMessage="Debe digitar la cantidad de Stock que hay"/>
+
+                        <p:commandButton value="Guardar" actionListener="#{productoBean.crear()}" update="frmprod msj" oncomplete="PF('wadprod').hide();"/>
+                        <p:commandButton value="Cancelar" onclick="PF('wadprod').hide();" />
+                    </h:panelGrid>
+                </center>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog resizable="false" hideEffect="Drop" id="edprod" widgetVar="wedprod" width="450" header="Editar Usuario">
+            <h:form>
+                <center>
+                    <h2>Editar Usuario</h2>
+                    <h:panelGrid columns="2" style="text-align: center">
+                        <p:outputLabel for="idp" value="Id Usuario"/>
+                        <p:inputText readonly="true" id="idp" value="#{productoBean.prod.id_Producto}"  required="true" requiredMessage="Debe digitar un numero identificador para el producto"/>
+
+                        <p:outputLabel for="nomp" value="Nombre"/>
+                        <p:inputText id="nomp" value="#{productoBean.prod.nombre_Producto}"  required="true" requiredMessage="Debe digitar el nombre del producto"/>
+
+                        <p:outputLabel for="desc" value="Descripcion"/>
+                        <p:inputText id="desc" value="#{productoBean.prod.descripcion_Producto}" />
+
+                        <p:outputLabel for="pre" value="Precio"/>
+                        <p:inputText id="pre" value="#{productoBean.prod.precio}"  required="true" requiredMessage="Debe digitar un Precio"/>
+
+                        <p:outputLabel for="cant" value="Cantidad"/>
+                        <p:inputText id="cant" value="#{productoBean.prod.cantidad_Stock}"  required="true" requiredMessage="Debe digitar la cantidad de Stock que hay"/>
+
+                        <p:commandButton value="Actualizar" actionListener="#{productoBean.actualizar()}" update="frmprod msj" oncomplete="PF('wedprod').hide();"/>
+                        <p:commandButton value="Cancelar" onclick="PF('wedprod').hide();" />
+                    </h:panelGrid>
+                </center>
+            </h:form>
+        </p:dialog>
+
+    </h:body>
+</html>
+

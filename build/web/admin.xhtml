@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Administrador</title>
+    <style>
+            *{
+                font-family: Arial;
+            }
+            :root {
+                scroll-behavior: smooth;
+                --color1: #E94364;
+                --color2: #EE738E;
+                --color3: #FFFFFF;
+                --color4: #BE780A;
+                --color5: #F6D172;
+                --color6: #000000;
+            }
+            .descargarexcel{
+                width: auto;
+                background: #1c5703;
+                border: 2px solid #0a2602 ;
+                border-radius: 1rem;
+                color: white;
+                margin: 1rem 1rem ;
+                font-size: 1.1rem;
+                font-family: Chivo;
+
+            }
+            .descargarpdf{
+                width: auto;
+                background: #600302;
+                border: 2px solid #3d0600 ;
+                border-radius: 1rem;
+                color: white;
+                margin: 1rem 1rem ;
+                font-size: 1.1rem;
+                font-family: Chivo;
+
+            }
+
+            .descargarexcel:hover {
+                background: white;
+                border: 3px solid #1c5703;
+                color: #0a2602;
+            }
+            .descargarpdf:hover {
+                background: white;
+                border: 3px solid #600302;
+                color: #3d0600;
+            }
+            .green{
+                background: green;
+            }
+            .red{
+                background: red;
+            }
+            .green:hover{
+                color: green;
+            }
+            .red:hover{
+                color: red;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <p:growl id="msj" showDetail="true" showSummary="true"/>
+        <f:event type="preRenderView" listener="#{loginBean.verificarSesion()}"/>
+        <h1 style="color: green">Bienvenido Administrador</h1>
+        <h:outputLabel value="#{loginBean.autenticar()}"/>
+
+        <h:form>
+            <p:commandButton value="Usuarios" action="usuarios.xhtml"/>
+            <p:commandButton value="Productos" action="productos.xhtml" style="margin-left: 10px;"/>
+            <p:commandButton value="Cerrar Sesion" actionListener="#{loginBean.cerrarSesion()}" style="margin-left: 10px;"/>
+        </h:form>
+
+    </h:body>
+</html>
+

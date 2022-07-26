@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Registro</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:growl id="msj" showDetail="true" showSummary="true"/>
+
+            <center>
+                <h2>Registrarse</h2>
+                <h:panelGrid columns="2" style="text-align: center">
+                    <p:outputLabel for="idu" value="Id Usuario"/>
+                    <p:inputText id="idu" value="#{usuarioBean.user.id_Usuario}"  required="true" requiredMessage="Debe digitar un numero de identificacion"/>
+
+                    <p:outputLabel for="ctr" value="Contraseña"/>
+                    <p:inputText id="ctr" value="#{usuarioBean.user.contraseña}"  required="true" requiredMessage="Debe digitar una ContraseÃ±a"/>
+
+                    <p:outputLabel for="nom" value="Nombre"/>
+                    <p:inputText id="nom" value="#{usuarioBean.user.nombre}"  required="true" requiredMessage="Debe digitar un Nombre"/>
+
+                    <p:outputLabel for="ape" value="Apellido"/>
+                    <p:inputText id="ape" value="#{usuarioBean.user.apellido}"  required="true" requiredMessage="Debe digitar un Apellido"/>
+
+                    <p:outputLabel for="cor" value="Correo"/>
+                    <p:inputText id="cor" value="#{usuarioBean.user.correo}"  required="true" requiredMessage="Debe digitar un Correo"/>
+
+                    <p:outputLabel for="tel" value="Telefono"/>
+                    <p:inputText id="tel" value="#{usuarioBean.user.telefono}"  required="true" requiredMessage="Debe digitar un Telefono"/>
+
+                    <p:outputLabel for="dir" value="Direccion"/>
+                    <p:inputText id="dir" value="#{usuarioBean.user.direccion}"  required="true" requiredMessage="Debe digitar una Direccion"/>
+
+                    <p:commandButton value="Registrarse" actionListener="#{usuarioBean.crear()}" update="msj" oncomplete="index"/>
+                </h:panelGrid>
+            </center>
+        </h:form>
+    </h:body>
+</html>
+
